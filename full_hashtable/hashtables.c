@@ -91,7 +91,27 @@ HashTable *create_hash_table(int capacity)
  */
 void hash_table_insert(HashTable *ht, char *key, char *value)
 {
-
+  unsigned int index = hash(key, ht->capacity);
+  if (ht->storage[index] == NULL) {
+    ht->storage[index] = create_pair(key, value);
+  } else {
+    LinkedPair *curr_pair = ht->storage[index];
+    LinkedPair *prev_pair = NULL;
+    int key_found = 0;
+    while (curr_pair && key_found == 0) {
+      if ((strcmp(curr_pair->key, key) == 0)) {
+        free(curr_pair->value);
+        curr_pair->value = strdup(value);
+        key_found = 1;
+        break;
+      }
+      prev_pair = curr_pair;
+      curr_pair = curr_pair->next;
+    }
+    if (key_found == 0) {
+      prev_pair->next = create_pair(key, value);
+    }
+  }
 }
 
 /*
