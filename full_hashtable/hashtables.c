@@ -201,11 +201,20 @@ void destroy_hash_table(HashTable *ht)
  */
 HashTable *hash_table_resize(HashTable *ht)
 {
-  HashTable *new_ht;
-
-  return new_ht;
+  if (ht != NULL) {
+    HashTable *new_ht = create_hash_table(ht->capacity * 2);
+    for (int index = 0; index < ht->capacity; index++){
+      LinkedPair *curr_pair = ht->storage[index];
+      while (curr_pair) {
+        hash_table_insert(new_ht, curr_pair->key, curr_pair->value);
+        curr_pair = curr_pair->next;
+      }
+    }
+    destroy_hash_table(ht);
+    return new_ht;
+  }
+  return NULL;
 }
-
 
 #ifndef TESTING
 int main(void)
