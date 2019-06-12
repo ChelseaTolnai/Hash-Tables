@@ -160,12 +160,10 @@ char *hash_table_retrieve(HashTable *ht, char *key)
 {
   unsigned int index = hash(key, ht->capacity);
   LinkedPair *curr_pair = ht->storage[index];
-  LinkedPair *prev_pair = NULL;
   while (curr_pair) {
     if (strcmp(curr_pair->key, key) == 0) {
       return curr_pair->value;
     }
-    prev_pair = curr_pair;
     curr_pair = curr_pair->next;
   }
   return NULL;
@@ -178,7 +176,19 @@ char *hash_table_retrieve(HashTable *ht, char *key)
  */
 void destroy_hash_table(HashTable *ht)
 {
-
+  if (ht != NULL) {
+    for (int index=0; index < ht->capacity; index++){
+      LinkedPair *curr_pair = ht->storage[index];
+      LinkedPair *next_pair = NULL;
+      while (curr_pair) {
+        next_pair = curr_pair->next;
+        destroy_pair(curr_pair);
+        curr_pair = next_pair;
+      }
+    }
+    free(ht->storage);
+    free(ht);
+  }
 }
 
 /*
