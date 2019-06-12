@@ -99,7 +99,7 @@ void hash_table_insert(HashTable *ht, char *key, char *value)
     LinkedPair *prev_pair = NULL;
     int key_found = 0;
     while (curr_pair && key_found == 0) {
-      if ((strcmp(curr_pair->key, key) == 0)) {
+      if (strcmp(curr_pair->key, key) == 0) {
         free(curr_pair->value);
         curr_pair->value = strdup(value);
         key_found = 1;
@@ -137,6 +137,16 @@ void hash_table_remove(HashTable *ht, char *key)
  */
 char *hash_table_retrieve(HashTable *ht, char *key)
 {
+  unsigned int index = hash(key, ht->capacity);
+  LinkedPair *curr_pair = ht->storage[index];
+  LinkedPair *prev_pair = NULL;
+  while (curr_pair) {
+    if (strcmp(curr_pair->key, key) == 0) {
+      return curr_pair->value;
+    }
+    prev_pair = curr_pair;
+    curr_pair = curr_pair->next;
+  }
   return NULL;
 }
 
