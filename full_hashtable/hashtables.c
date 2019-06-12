@@ -124,7 +124,28 @@ void hash_table_insert(HashTable *ht, char *key, char *value)
  */
 void hash_table_remove(HashTable *ht, char *key)
 {
-
+  unsigned int index = hash(key, ht->capacity);
+  LinkedPair *curr_pair = ht->storage[index];
+  LinkedPair *prev_pair = NULL;
+  int key_found = 0;
+  while (curr_pair && key_found == 0) {
+    if (strcmp(curr_pair->key, key) == 0) {
+      if (prev_pair) {
+        prev_pair->next = curr_pair->next;
+      } else {
+        ht->storage[index] = curr_pair->next;
+      }
+      destroy_pair(curr_pair);
+      key_found = 1;
+      break;
+    }
+    prev_pair = curr_pair;
+    curr_pair = curr_pair->next;
+  }
+  if (key_found == 0) {
+    fprintf(stderr, "Error: key does not exist\n");
+    return;
+  }
 }
 
 /*
